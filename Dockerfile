@@ -1,3 +1,3 @@
-FROM sebastian-daschner.com:1000/wildfly:6
+FROM tomee:8-jre-7.0.3-plus
 
-COPY target/greeting-processor.war /opt/wildfly/standalone/deployments
+COPY target/greeting-processor.war /usr/local/tomee/webapps/

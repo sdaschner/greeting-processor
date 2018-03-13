@@ -2,11 +2,14 @@ kind: Service
 apiVersion: v1
 metadata:
   name: greeting-processor
+  labels:
+    app: greeting-processor
 spec:
   selector:
     app: greeting-processor
   ports:
     - port: 8080
+      name: http
   type: NodePort
 ---
 kind: Deployment
@@ -19,15 +22,30 @@ spec:
     metadata:
       labels:
         app: greeting-processor
+        version: v1
     spec:
       containers:
       - name: greeting-processor
-        image: sebastian-daschner.com:1000/greeting-processor:1
+        env:
+        - name: GREETING
+          value: Hi
+        image: docker.sebastian-daschner.com/greeting-processor:2
         imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            path: /greeting-processor/resources/health-check
-            port: 8080
       imagePullSecrets:
       - name: regsecret
       restartPolicy: Always
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: greeting-processor
+spec:
+  rules:
+    - host: kubernetes.local
+      http:
+        paths:
+        - path: /greeting-processor
+          backend:
+            serviceName: greeting-processor
+            servicePort: 8080
+---

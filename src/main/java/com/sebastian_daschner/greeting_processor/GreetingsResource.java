@@ -3,7 +3,6 @@ package com.sebastian_daschner.greeting_processor;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -11,17 +10,20 @@ import javax.ws.rs.Path;
 public class GreetingsResource {
 
     @Inject
-    Greetings greetings;
+    GreetingProcessor greetingProcessor;
 
     @POST
-    public JsonObject createGreeting(JsonObject greeting) {
-        String name = greeting.getString("name", null);
-        if (name == null)
-            throw new BadRequestException();
+    public JsonObject calculateGreeting(JsonObject jsonObject) {
+        String name = extractName(jsonObject);
+        String greeting = greetingProcessor.calculateGreeting(name);
 
         return Json.createObjectBuilder()
-                .add("greeting", greetings.createGreeting(name))
+                .add("greeting", greeting)
                 .build();
+    }
+
+    private String extractName(JsonObject jsonObject) {
+        return jsonObject.getString("name", null);
     }
 
 }

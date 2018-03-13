@@ -3,11 +3,11 @@ package com.sebastian_daschner.greeting_processor;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-@Path("health-check")
+@Path("health")
 public class HealthResource {
 
     @GET
-    public String status() {
+    public String healthCheck() {
         return "OK";
     }
 
